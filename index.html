@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-succes">
+        <a class="navbar-brand" href="#">FastAbsensi.</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Beranda <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="absen" href="#">Absensi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Info</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Kontak</a>
+              </li>
+          </ul>
+            <button class="btn btn-outline-light my-2 my-sm-0">User</button>
+        </div>
+      </nav>
+<br>
+  
+<div class="container">
+    <h2>Form Absensi</h2>
+    <form id="data-peserta">
+      <div class="form-group">
+        <label for="nama">Nama:</label>
+        <input type="text" class="form-control" id="nama" placeholder="Masukkan Nama" name="nama" value="" maxlength="10" required>
+      </div>
+      <div class="form-group">
+        <label for="umur">Umur:</label>
+        <input type="text" class="form-control" id="umur" placeholder="Masukkan Umur" name="umur" value="" maxlength="2" required>
+      </div>
+      <div class="form-group">
+        <label for="alamat">Alamat:</label>
+        <input type="text" class="form-control" id="alamat" placeholder="Masukkan Alamat" name="alamat" value="" maxlength="40" required>
+      </div>
+      <button id="submitButton" type="submit" value="Submit Data" class="btn btn-danger">Submit</button>
+    </form>
+  </div>
+<br>
+  <div class="child-content" id="peserta-list">
+      <h2>Data Peserta</h2>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Nama</th>
+            <th scope="col">Umur</th>
+            <th scope="col">Alamat</th>
+          </tr>
+        </thead>
+        <tbody id="peserta-list-detail" align="center"></tbody>
+      </table>
+</div>
+<script>
+    const storageKey = "STORAGE_KEY";
+ 
+ const submitAction = document.getElementById("data-peserta");
+
+  
+ function checkForStorage() {
+     return typeof(Storage) !== "undefined"
+ }
+
+ function putPesertaList(data){
+    if(checkForStorage()){
+        let pesertaData = [];
+        if (localStorage.getItem(storageKey) === null) {
+            pesertaData = [];
+        } else {
+            pesertaData = JSON.parse(localStorage.getItem(storageKey));
+        }     
+        pesertaData.unshift(data); 
+        if (pesertaData.length > 5) {
+            pesertaData.pop();
+        }
+        localStorage.setItem(storageKey, JSON.stringify(pesertaData));   
+    }
+}
+
+function getPesertaList() {
+    if (checkForStorage()) {
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
+    } else {
+        return [];
+    }
+}
+
+function renderPesertaList() {
+    const pesertaData = getPesertaList();
+    const pesertaList = document.querySelector("#peserta-list-detail");
+       
+    pesertaList.innerHTML = "";
+   
+    for (let peserta of pesertaData) {
+        let row = document.createElement('tr');
+        row.innerHTML = "<td>" + peserta.nama + "</td>";
+        row.innerHTML += "<td>" + peserta.umur + "</td>";
+        row.innerHTML += "<td>" + peserta.alamat + "</td>";
+   
+        pesertaList.appendChild(row);
+    }
+}
+
+
+
+submitAction.addEventListener("submit", function(event){
+    const inputNama = document.getElementById("nama").value;
+    const inputUmur = document.getElementById("umur").value;
+    const inputAlamat = document.getElementById("alamat").value;
+    const newPesertaData = {
+        nama: inputNama,
+        umur: inputUmur,
+        alamat: inputAlamat,
+    }
+    putPesertaList(newPesertaData);
+    renderPesertaList();
+});
+
+
+window.addEventListener("load", function(){
+    if (checkForStorage) {
+        if (localStorage.getItem(storageKey) !== null){
+                const pesertaData = getPesertaList();
+                renderPesertaList(pesertaData);
+            }
+    }else{
+        alert("Browser yang Anda gunakan tidak mendukung Web Storage")
+    }
+});
+
+
+    </script>
+    
+       
+
+</body>
+</html>
