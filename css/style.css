@@ -60,13 +60,7 @@ body {
   font-size: 22px;
 }
 .table{
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 700px;
-    border: 1px solid #ddd;
    background-color: white;
-  
-
 }
 
 .table th{
